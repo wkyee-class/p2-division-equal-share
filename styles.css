@@ -1,3 +1,4 @@
+html.prejoin #screen-landing { display: none !important; }
 :root {
   --bg: #fff4e8;
   --paper: #fffdf8;
@@ -587,28 +588,28 @@ svg.overlay { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 
 .progress-list {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 6px;
   touch-action: pan-y;
 }
 .student-card {
   background: var(--paper);
   border: 3px solid var(--line);
-  border-radius: 16px;
-  padding: 10px 12px;
+  border-radius: 12px;
+  padding: 6px 7px;
   text-align: left;
   cursor: pointer;
-  min-height: 92px;
+  min-height: 0;
   color: var(--ink);
   font-family: inherit;
 }
-.student-card:hover { border-color: var(--primary); }
+.student-card:hover, .student-card:focus, .student-card:active { border-color: var(--primary); }
 .student-card.online { border-color: #86c7a3; }
 .student-card.ok { background: var(--good-bg); }
 .student-card.bad { background: var(--bad-bg); }
 .student-card.empty { opacity: 0.7; cursor: default; }
-.student-card h3 { margin: 0 0 4px; font-size: 22px; }
-.student-card p { margin: 0; font-size: 14px; font-weight: 700; color: var(--muted); }
+.student-card h3 { margin: 0 0 2px; font-size: 15px; }
+.student-card p { margin: 0; font-size: 11px; font-weight: 700; color: var(--muted); line-height: 1.3; }
 .online-names {
   width: 100%;
   background: #fff;
@@ -622,6 +623,9 @@ svg.overlay { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 
 .q-tabs { margin: 8px 0 10px; }
 .q-tabs .btn { min-width: 72px; min-height: 48px; font-size: 16px; padding: 8px 10px; }
 
+@media (max-width: 1199px) {
+  .progress-list { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+}
 @media (max-width: 900px) {
   main.play, .broadcast-play { grid-template-columns: 1fr; grid-template-rows: minmax(34vh, 1fr) auto; }
   .board-col { min-height: 34vh; }
@@ -630,6 +634,7 @@ svg.overlay { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 
   .unit-opt { min-height: 32px; font-size: 16px; padding: 2px 6px; }
   .sentence-bar { padding: 8px 8px; gap: 6px; font-size: 18px; }
   button, .keys button { min-height: 52px; }
+  .progress-list { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
 @media (max-width: 600px) and (min-height: 700px) {
   .num-grid {
@@ -653,7 +658,7 @@ svg.overlay { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 
   .num-grid { overflow-y: auto; touch-action: pan-y; }
 }
 
-#screen-play.active, #screen-broadcast.active, #screen-inspect.active {
+#screen-play.active, #screen-broadcast.active, #screen-inspect.active, #screen-demo.active {
   height: 100dvh;
   overflow: hidden;
   align-items: stretch;
@@ -664,7 +669,7 @@ svg.overlay { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 
   align-items: stretch;
   touch-action: pan-y;
 }
-body.mode-play, body.mode-broadcast, body.mode-inspect {
+body.mode-play, body.mode-broadcast, body.mode-inspect, body.mode-demo {
   height: 100dvh;
   overflow: hidden;
 }
@@ -677,4 +682,188 @@ body.mode-play, body.mode-broadcast, body.mode-inspect {
   font-weight: 800;
   color: var(--good);
   margin-top: 8px;
+}
+
+.demo-toolbar { gap: 8px; }
+.demo-toolbar .btn { width: auto; min-width: 120px; min-height: 48px; font-size: 18px; }
+@media (max-width: 900px) {
+  .demo-toolbar { width: 100%; justify-content: flex-end; }
+  .demo-toolbar .btn { flex: 1 1 auto; }
+}
+
+/* ---- QR / class entry (projectable) ---- */
+#screen-entry.active {
+  height: 100dvh;
+  overflow: hidden;
+  align-items: stretch;
+  padding: calc(12px + var(--safe)) 18px calc(12px + var(--safeb));
+}
+.entry-shell {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 3px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 14px 20px 12px;
+}
+.entry-instruction {
+  font-size: clamp(20px, 2.8vw, 36px);
+  color: var(--ink);
+  font-weight: 800;
+  line-height: 1.35;
+}
+.entry-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 20px;
+  align-items: center;
+}
+.entry-qr-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  min-width: 0;
+}
+#entry-qr-canvas {
+  width: min(72vmin, 100%);
+  max-height: min(72vmin, 100%);
+  height: auto;
+  aspect-ratio: 1;
+  background: #fff;
+  padding: 10px;
+  border-radius: 16px;
+  border: 6px solid var(--ink);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.entry-qr-fallback {
+  margin: 12px 8px 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--muted);
+  text-align: center;
+}
+.entry-meta { min-width: 0; text-align: center; }
+.entry-label {
+  margin: 0;
+  font-size: clamp(16px, 1.8vw, 22px);
+  font-weight: 800;
+  color: var(--muted);
+}
+.entry-code {
+  font-size: clamp(4rem, 12vw, 9rem);
+  min-height: 0;
+  padding: 10px 12px;
+  margin: 8px 0 18px;
+  letter-spacing: 0.18em;
+  user-select: text;
+  -webkit-user-select: text;
+}
+.entry-url {
+  font-size: clamp(16px, 2.1vw, 28px);
+  font-weight: 800;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  text-align: center;
+  user-select: text;
+  -webkit-user-select: text;
+  line-height: 1.35;
+  color: var(--ink);
+  background: #fff;
+  border: 3px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.entry-actions { margin-top: 12px; flex-shrink: 0; }
+@media (max-width: 900px), (max-aspect-ratio: 4/5) {
+  .entry-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+  #entry-qr-canvas {
+    width: min(56vmin, 100%);
+    max-height: min(56vmin, 100%);
+  }
+  .entry-code { font-size: clamp(3rem, 14vw, 6rem); margin: 6px 0 10px; }
+}
+
+/* ---- Teacher demo: large board, this game's pre-laid columns + 橫式／直式 ---- */
+#screen-demo.active main.play {
+  grid-template-columns: minmax(0, 1.95fr) minmax(260px, 0.55fr);
+}
+#screen-demo .board-col { min-width: 0; min-height: 0; }
+#screen-demo .board { min-width: 0; min-height: 220px; }
+#screen-demo .demo-toolbar .btn { min-height: 48px; }
+#screen-demo .sentence-bar { font-size: clamp(18px, 1.8vw, 24px); }
+@media (max-width: 900px) {
+  #screen-demo.active main.play {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(46vh, 1fr) auto;
+  }
+  #screen-demo .board-col { min-height: 46vh; }
+  #screen-demo .panel { max-height: 42dvh; }
+}
+body.demo-project #screen-demo.active main.play {
+  grid-template-columns: minmax(0, 2.5fr) minmax(240px, 0.42fr);
+}
+body.demo-project #demo-hint,
+body.demo-project #demo-type,
+body.demo-project #demo-h-hint,
+body.demo-project #demo-longdiv-hint,
+body.demo-project #screen-demo .mini-hint { display: none !important; }
+body.demo-project #screen-demo .play-bar .sync-bar { display: none; }
+body.demo-project #screen-demo .panel .blank {
+  min-height: 70px;
+  font-size: clamp(32px, 3.2vw, 48px);
+}
+body.demo-project #screen-demo .panel .op,
+body.demo-project #screen-demo .panel .eqspan,
+body.demo-project #screen-demo .panel .ellipsis {
+  font-size: clamp(32px, 3.2vw, 48px);
+}
+body.demo-project #screen-demo .panel h2 { font-size: clamp(22px, 2.4vw, 34px); }
+body.demo-project #screen-demo .group-live { font-size: clamp(18px, 2vw, 26px); }
+body.demo-project #screen-demo .sentence-bar {
+  font-size: clamp(20px, 2vw, 28px);
+  padding: 8px 12px;
+}
+body.demo-project #screen-demo .sentence-bar .blank {
+  min-height: 48px;
+  font-size: clamp(22px, 2.2vw, 30px);
+}
+body.demo-project #screen-demo .unit-opt {
+  min-height: 48px;
+  min-width: 48px;
+  font-size: clamp(22px, 2.2vw, 30px);
+}
+body.demo-project #screen-demo .numkeys button { min-height: 46px; font-size: 20px; }
+body.demo-project #demo-items .item svg { width: min(100%, 200px); }
+body.demo-project .demo-toolbar .btn {
+  min-height: 56px;
+  font-size: 22px;
+  min-width: 140px;
+}
+@media (max-width: 900px) {
+  body.demo-project #screen-demo.active main.play {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(54vh, 1fr) auto;
+  }
+  body.demo-project #screen-demo .board-col { min-height: 54vh; }
+  body.demo-project #screen-demo .panel { max-height: 36dvh; }
+}
+
+/* Wide teacher console: keep actions easy to click */
+@media (min-width: 1200px) {
+  .console-controls { gap: 10px; }
+  .console-controls .btn { min-height: 52px; font-size: 19px; padding: 12px 18px; }
+  .progress-list { gap: 6px; }
 }
